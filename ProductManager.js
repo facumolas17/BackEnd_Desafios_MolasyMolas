@@ -46,7 +46,8 @@ class ProductManager{
     }
 
     getProducts(){
-        return this.products;
+        let fileProducts = fs.readFileSync(this.path,'utf-8')
+        return console.log(fileProducts);
     }
 
     getProductById(id){
@@ -64,12 +65,31 @@ class ProductManager{
         
     }
 
-    setProduct(id){
+    upDateProduct(id,field,value){
+        const productToUpdate = this.products.find(product => product.id === id);
+
+        if(!productToUpdate){
+            return console.log(`El campo ${field} no existe`);
+        } 
+
+        productToUpdate[field] = value; 
+        fs.writeFileSync(this.path,JSON.stringify(this.products));
+        return console.log(`El campo ${field} del producto con id ${id} fue cambiado a ${value}`);
 
     }
 
-    removeProduct(){
+    removeProduct(id){
+        let productToRemove = this.products.findIndex(prod => prod.id===id);
+        
+         
+        if (productToRemove=== -1){
+            console.log(`El producto con id ${id} no existe`); 
+            return;
+        } 
 
+        this.products.splice(productToRemove,1);
+        console.log(`El producto con id ${id} fue eliminado`); 
+        fs.writeFileSync(this.path,JSON.stringify(this.products));
     }
 }
 
@@ -79,7 +99,12 @@ pm.addProduct("queso1","jdakks  sfkgdm dk", 2300, "http://jkjnskdc.ad", "QH4562"
 pm.addProduct("fiambre2","jdakks gdh  sfkgdm dk", 2700, "http://jkjnskdfsc.ad", "FF4562", 150);
 pm.addProduct("fiambre3","jdakks gdh  sfkgdm dk", 2700, "http://jkjnskdfsc.ad", "FF456", 150);
 
-console.log(pm.getProducts());
+pm.getProducts();
 console.log("----------------");
 console.log(pm.getProductById(2));
 console.log(pm.getProductById(8));
+
+pm.upDateProduct(2, 'title', 'title cambiado');
+pm.removeProduct(1);
+pm.getProductById(2);
+pm.getProducts();
